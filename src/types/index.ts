@@ -71,3 +71,53 @@ export interface UseCommentsReturn {
   resolveUsers: (userIds: string[]) => Promise<User[]>;
   isLoading: boolean;
 }
+
+/**
+ * BlockNote block structure
+ * Simplified type for blocks that will be inserted into the editor
+ */
+export interface BlockNoteBlock {
+  type: string;
+  props?: Record<string, any>;
+  content?: string | any[];
+  children?: BlockNoteBlock[];
+}
+
+/**
+ * Editor state context for AI generation
+ */
+export interface EditorState {
+  selectedText: string;
+  selectedBlocks: any[];
+  allBlocks: any[];
+  cursorPosition: number;
+}
+
+/**
+ * AI generation history item
+ */
+export interface AIGeneration {
+  input: string;
+  output: string;
+  blocks: BlockNoteBlock[];
+  timestamp: number;
+}
+
+/**
+ * Return type for useAIGeneration hook
+ */
+export interface UseAIGenerationReturn {
+  generate: (userInput: string) => Promise<BlockNoteBlock[] | undefined>;
+  isGenerating: boolean;
+  error: string | null;
+  lastGeneration: AIGeneration | null;
+}
+
+/**
+ * Props for AIInput component
+ */
+export interface AIInputProps {
+  onGenerate: (userInput: string) => Promise<void>;
+  isGenerating: boolean;
+  error: string | null;
+}

@@ -1,5 +1,5 @@
 /**
- * Main Application Component - Comments Version
+ * Main Application Component - Comments + AI Version
  *
  * This is the top-level component that:
  * - Manages comment system state via useComments hook
@@ -7,14 +7,18 @@
  * - Handles sidebar toggle
  * - Manages user switching
  * - Provides clear data functionality
+ * - AI-powered content generation via AIInput component
  */
 
 import { useState } from 'react';
 import type { BlockNoteEditor } from '@blocknote/core';
 import { Editor } from './components/Editor';
 import { UserSelector } from './components/UserSelector';
+import { AIInput } from './components/AIInput';
 import { useComments } from './hooks/useComments';
+import { useAIGeneration } from './hooks/useAIGeneration';
 import { clearStoredData } from './lib/yjs-setup';
+import { isOpenAIConfigured } from './lib/openai';
 import type { User } from './types';
 import './App.css';
 
@@ -31,6 +35,9 @@ function App() {
 
   // Editor instance state
   const [editor, setEditor] = useState<BlockNoteEditor | null>(null);
+
+  // AI generation hook
+  const { generate, isGenerating, error: aiError } = useAIGeneration(editor);
 
   // Sidebar toggle state
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -82,9 +89,18 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <h1>BlockNote Sandbox - Comments</h1>
+          <h1>BlockNote Sandbox - AI + Comments</h1>
 
           <div className="header-controls">
+            {isOpenAIConfigured() ? (
+              <span className="api-status" style={{ fontSize: '14px', color: '#059669' }}>
+                ✅ AI Ready
+              </span>
+            ) : (
+              <span className="api-status" style={{ fontSize: '14px', color: '#dc2626' }}>
+                ⚠️ API Key Missing
+              </span>
+            )}
             <UserSelector
               currentUser={currentUser}
               onUserChange={setCurrentUser}
@@ -120,6 +136,13 @@ function App() {
           />
         </div>
       </main>
+
+      {/* AI Input - floats at bottom of screen */}
+      <AIInput
+        onGenerate={generate}
+        isGenerating={isGenerating}
+        error={aiError}
+      />
     </div>
   );
 }

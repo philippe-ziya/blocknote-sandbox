@@ -10,10 +10,12 @@
  */
 
 import { useState } from 'react';
+import type { BlockNoteEditor } from '@blocknote/core';
 import { Editor } from './components/Editor';
 import { UserSelector } from './components/UserSelector';
 import { useComments } from './hooks/useComments';
 import { clearStoredData } from './lib/yjs-setup';
+import type { User } from './types';
 import './App.css';
 
 function App() {
@@ -28,7 +30,7 @@ function App() {
   } = useComments();
 
   // Editor instance state
-  const [editor, setEditor] = useState(null);
+  const [editor, setEditor] = useState<BlockNoteEditor | null>(null);
 
   // Sidebar toggle state
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -63,6 +65,15 @@ function App() {
     return (
       <div className="app-loading">
         <p>Loading comments system...</p>
+      </div>
+    );
+  }
+
+  // TypeScript requires us to check for null before using yjsDoc and threadStore
+  if (!yjsDoc || !threadStore) {
+    return (
+      <div className="app-loading">
+        <p>Initializing...</p>
       </div>
     );
   }

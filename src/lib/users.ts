@@ -6,8 +6,10 @@
  * and a role that determines their permissions.
  */
 
+import type { User } from '../types';
+
 // Mock users for testing different comment scenarios
-export const MOCK_USERS = [
+export const MOCK_USERS: readonly User[] = [
   {
     id: 'user-1',
     username: 'Designer',
@@ -32,25 +34,23 @@ export const MOCK_USERS = [
     color: '#FAF594',
     role: 'comment' // Can only add comments, not edit/delete
   }
-];
+] as const;
 
 /**
  * Get the current user
  * Loads from localStorage or returns the first user as default
- * @returns {Object} User object
  */
-export function getCurrentUser() {
+export function getCurrentUser(): User {
   const savedUserId = localStorage.getItem('currentUserId');
   const user = MOCK_USERS.find(u => u.id === savedUserId);
-  return user || MOCK_USERS[0];
+  return user || MOCK_USERS[0]!;
 }
 
 /**
  * Set the current user
  * Saves user ID to localStorage for persistence
- * @param {string} userId - The user ID to set as current
  */
-export function setCurrentUser(userId) {
+export function setCurrentUser(userId: string): void {
   localStorage.setItem('currentUserId', userId);
 }
 
@@ -58,10 +58,8 @@ export function setCurrentUser(userId) {
  * Resolve user IDs to user objects
  * Required by BlockNote to display user information in comments
  * Simulates async behavior (like a real API call)
- * @param {string[]} userIds - Array of user IDs to resolve
- * @returns {Promise<Object[]>} Array of user objects
  */
-export async function resolveUsers(userIds) {
+export async function resolveUsers(userIds: string[]): Promise<User[]> {
   // Simulate network delay for realism
   await new Promise(resolve => setTimeout(resolve, 100));
 

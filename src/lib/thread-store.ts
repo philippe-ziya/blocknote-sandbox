@@ -9,15 +9,17 @@
  */
 
 import { YjsThreadStore, DefaultThreadStoreAuth } from '@blocknote/core/comments';
+import type * as Y from 'yjs';
+import type { User } from '../types';
 
 /**
  * Create thread store
  *
- * @param {Y.Doc} doc - The Yjs document for persistence
- * @param {Object} currentUser - The current user object
- * @returns {YjsThreadStore} Configured thread store
+ * @param doc - The Yjs document for persistence
+ * @param currentUser - The current user object
+ * @returns Configured thread store
  */
-export function createThreadStore(doc, currentUser) {
+export function createThreadStore(doc: Y.Doc, currentUser: User): YjsThreadStore {
   // Create authorization
   const auth = new DefaultThreadStoreAuth(
     currentUser.id,

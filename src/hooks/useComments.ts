@@ -13,16 +13,17 @@ import { useState, useEffect } from 'react';
 import { createYjsDocument } from '../lib/yjs-setup';
 import { createThreadStore } from '../lib/thread-store';
 import { getCurrentUser, resolveUsers } from '../lib/users';
+import type { UseCommentsReturn, User } from '../types';
 
-export function useComments() {
+export function useComments(): UseCommentsReturn {
   // Current user state
-  const [currentUser, setCurrentUser] = useState(getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<User>(getCurrentUser());
 
   // Yjs document state
-  const [yjsDoc, setYjsDoc] = useState(null);
+  const [yjsDoc, setYjsDoc] = useState<UseCommentsReturn['yjsDoc']>(null);
 
   // Thread store state
-  const [threadStore, setThreadStore] = useState(null);
+  const [threadStore, setThreadStore] = useState<UseCommentsReturn['threadStore']>(null);
 
   // Loading state
   const [isLoading, setIsLoading] = useState(true);

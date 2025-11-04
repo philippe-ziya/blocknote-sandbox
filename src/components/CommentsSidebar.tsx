@@ -17,8 +17,9 @@
 
 import { ThreadsSidebar } from '@blocknote/react';
 import '@blocknote/mantine/style.css';
+import type { CommentsSidebarProps } from '../types';
 
-export function CommentsSidebar({ editor }) {
+export function CommentsSidebar({ editor }: CommentsSidebarProps) {
   // Show loading state if editor isn't ready yet
   if (!editor) {
     return (

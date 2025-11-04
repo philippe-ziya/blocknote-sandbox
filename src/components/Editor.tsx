@@ -20,18 +20,19 @@ import { useEffect } from 'react';
 import { useCreateBlockNote, BlockNoteViewEditor, ThreadsSidebar, FloatingComposerController } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
+import type { EditorProps } from '../types';
 
-export function Editor({ yjsDoc, threadStore, resolveUsers, currentUser, onEditorReady, showSidebar }) {
+export function Editor({ yjsDoc, threadStore, resolveUsers, currentUser, onEditorReady, showSidebar }: EditorProps) {
   // Create editor with collaboration and commenting enabled
   const editor = useCreateBlockNote({
     // Function to resolve user IDs to user objects
     // This is used to display user names and colors in comments
-    resolveUsers: resolveUsers,
+    resolveUsers,
 
     // Comments configuration
     comments: {
       // Thread store for managing comment threads
-      threadStore: threadStore
+      threadStore
     },
 
     // Collaboration configuration

@@ -16,6 +16,8 @@ body, html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
 }
 
 #root {
@@ -95,6 +97,13 @@ body, html {
   overflow: auto;
   padding: 16px;
   min-width: 0; /* Allows flex item to shrink below content size */
+}
+
+/* BlockNote Editor - max width constraint */
+.bn-editor {
+  max-width: 908px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Comments Sidebar - 480px width as specified */
@@ -258,7 +267,7 @@ body, html {
   }
 
   .editor-content {
-    padding: 12px;
+    padding: 80px;
   }
 
   .header-controls {

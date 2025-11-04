@@ -95,7 +95,7 @@ body, html {
 .editor-content {
   flex: 1;
   overflow: auto;
-  padding: 16px;
+  padding: 0px;
   min-width: 0; /* Allows flex item to shrink below content size */
 }
 
@@ -104,6 +104,8 @@ body, html {
   max-width: 908px;
   margin-left: auto;
   margin-right: auto;
+  padding-top: 32px;
+  padding-bottom: 32px;
 }
 
 /* Comments Sidebar - 480px width as specified */
@@ -264,10 +266,6 @@ body, html {
 
   .app-header h1 {
     font-size: 16px;
-  }
-
-  .editor-content {
-    padding: 80px;
   }
 
   .header-controls {

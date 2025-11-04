@@ -17,24 +17,60 @@
 
 import OpenAI from 'openai';
 
+// Get API key from environment (check multiple possible names)
+const getApiKey = (): string | undefined => {
+  // Check VITE_ prefixed version (required for Vite to expose to client)
+  const viteKey = import.meta.env.VITE_OPENAI_API_KEY;
+  if (viteKey) return viteKey;
+
+  // Fallback: check without prefix (in case user added it this way)
+  // Note: This won't work in Vite unless explicitly configured
+  const directKey = import.meta.env.OPENAI_API_KEY;
+  if (directKey) return directKey;
+
+  return undefined;
+};
+
 // Check if API key is configured
 export const isOpenAIConfigured = (): boolean => {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  return !!apiKey && apiKey !== 'your-api-key-goes-here' && apiKey.startsWith('sk-');
+  const apiKey = getApiKey();
+
+  if (!apiKey) {
+    console.log('ℹ️ No OpenAI API key found. Checked: VITE_OPENAI_API_KEY, OPENAI_API_KEY');
+    return false;
+  }
+
+  if (apiKey === 'your-api-key-goes-here') {
+    console.warn('⚠️ OpenAI API key is placeholder value');
+    return false;
+  }
+
+  if (!apiKey.startsWith('sk-')) {
+    console.warn('⚠️ OpenAI API key does not start with sk-');
+    return false;
+  }
+
+  console.log('✅ OpenAI API key configured');
+  return true;
 };
 
 // Get OpenAI client instance (returns null if not configured)
 export const getOpenAIClient = (): OpenAI | null => {
+  const apiKey = getApiKey();
+
   if (!isOpenAIConfigured()) {
     console.warn('⚠️ OpenAI not configured. AI features will be disabled.');
+    console.log('💡 Add VITE_OPENAI_API_KEY to your .env.local or deployment environment');
     return null;
   }
 
   try {
-    return new OpenAI({
-      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+    const client = new OpenAI({
+      apiKey: apiKey!,
       dangerouslyAllowBrowser: true // Required for client-side usage
     });
+    console.log('✅ OpenAI client initialized successfully');
+    return client;
   } catch (error) {
     console.error('❌ Failed to initialize OpenAI client:', error);
     return null;

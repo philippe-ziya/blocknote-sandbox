@@ -1,0 +1,234 @@
+/**
+ * App Styles - Comments Version
+ *
+ * Two-column layout with editor and toggleable sidebar
+ * Sidebar width: 480px (as specified)
+ */
+
+/* App Layout */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+/* Header */
+.app-header {
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 24px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 100%;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.header-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Main Content Area */
+.app-main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-container {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  background: white;
+}
+
+.editor-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Comments Sidebar - 480px width as specified */
+.comments-sidebar {
+  width: 480px;
+  border-left: 1px solid #e0e0e0;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.comments-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+}
+
+.comments-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.comments-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.comments-empty {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+/* User Selector */
+.user-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-selector label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.user-selector select {
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  color: #333;
+}
+
+.user-selector select:hover {
+  border-color: #c0c0c0;
+}
+
+.user-selector select:focus {
+  outline: none;
+  border-color: #958DF1;
+  box-shadow: 0 0 0 2px rgba(149, 141, 241, 0.1);
+}
+
+/* Toggle Button */
+.toggle-button {
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+  font-weight: 500;
+}
+
+.toggle-button:hover {
+  background: #f5f5f5;
+  border-color: #c0c0c0;
+}
+
+.toggle-button:active {
+  background: #e8e8e8;
+}
+
+/* Clear Button */
+.clear-button {
+  padding: 6px 12px;
+  border: 1px solid #dc2626;
+  border-radius: 4px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.clear-button:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.clear-button:active {
+  background: #b91c1c;
+}
+
+/* Loading State */
+.app-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 16px;
+  color: #666;
+  background: #f5f5f5;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .app-main {
+    flex-direction: column;
+  }
+
+  .comments-sidebar {
+    width: 100%;
+    height: 400px;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .editor-wrapper {
+    max-width: 100%;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header h1 {
+    font-size: 18px;
+  }
+
+  .editor-container {
+    padding: 16px;
+  }
+
+  .header-controls {
+    font-size: 13px;
+  }
+
+  .user-selector select,
+  .toggle-button,
+  .clear-button {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}

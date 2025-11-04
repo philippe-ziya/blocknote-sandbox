@@ -1,93 +1,69 @@
-import { useState, useEffect } from 'react'
-import Editor from './components/Editor'
-
-// localStorage key for saving editor content
-const STORAGE_KEY = 'blocknote-content';
-
 /**
- * Main Application Component
+ * Main Application Component - Comments Version
  *
  * This is the top-level component that:
- * - Manages the editor state
- * - Handles editor content changes
- * - Provides the basic layout structure
- * - Persists content to localStorage (Phase 2)
+ * - Manages comment system state via useComments hook
+ * - Provides two-column layout (editor + optional sidebar)
+ * - Handles sidebar toggle
+ * - Manages user switching
+ * - Provides clear data functionality
  */
+
+import { useState } from 'react';
+import { Editor } from './components/Editor';
+import { CommentsSidebar } from './components/CommentsSidebar';
+import { UserSelector } from './components/UserSelector';
+import { useComments } from './hooks/useComments';
+import { clearStoredData } from './lib/yjs-setup';
+import './App.css';
+
 function App() {
-  // Track the last saved time for user feedback
-  const [lastSaved, setLastSaved] = useState(null);
+  // Initialize comment system
+  const {
+    currentUser,
+    setCurrentUser,
+    yjsDoc,
+    threadStore,
+    resolveUsers,
+    isLoading
+  } = useComments();
 
-  // Store initial content loaded from localStorage
-  const [initialContent, setInitialContent] = useState(undefined);
+  // Editor instance state
+  const [editor, setEditor] = useState(null);
 
-  // Track whether we've finished loading from localStorage
-  const [isLoaded, setIsLoaded] = useState(false);
+  // Sidebar toggle state
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   /**
-   * Load saved content from localStorage on component mount
+   * Handle clear all data
+   * Clears both editor content AND comments from IndexedDB
    */
-  useEffect(() => {
-    try {
-      const savedContent = localStorage.getItem(STORAGE_KEY);
-      if (savedContent) {
-        const parsed = JSON.parse(savedContent);
-        setInitialContent(parsed);
-        console.log('Loaded saved content from localStorage:', parsed);
-      } else {
-        setInitialContent(undefined);
-        console.log('No saved content found, starting fresh');
+  const handleClearData = async () => {
+    if (window.confirm('Clear all editor content and comments? This cannot be undone.')) {
+      try {
+        await clearStoredData();
+        console.log('🗑️ All data cleared');
+        window.location.reload();
+      } catch (error) {
+        console.error('❌ Failed to clear data:', error);
+        alert('Failed to clear data. Check console for details.');
       }
-    } catch (error) {
-      console.error('Error loading saved content:', error);
-      // If there's an error, we'll just start with empty content
-      setInitialContent(undefined);
-    } finally {
-      setIsLoaded(true);
-    }
-  }, []);
-
-  /**
-   * Called whenever the editor content changes
-   * Saves the content to localStorage automatically
-   * @param {Object} editor - The BlockNote editor instance
-   */
-  const handleEditorChange = async (editor) => {
-    try {
-      // Get the current content from the editor
-      const content = editor.document;
-
-      // Save to localStorage
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
-
-      // Update the last saved timestamp
-      setLastSaved(new Date());
-
-      console.log('Content saved to localStorage');
-    } catch (error) {
-      console.error('Error saving content:', error);
     }
   };
 
   /**
-   * Clear all saved content and refresh the page
+   * Toggle sidebar visibility
    */
-  const handleClearContent = () => {
-    if (confirm('Are you sure you want to clear all content? This cannot be undone.')) {
-      localStorage.removeItem(STORAGE_KEY);
-      console.log('Content cleared from localStorage');
-      // Reload the page to start fresh
-      window.location.reload();
-    }
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+    console.log('👁️ Sidebar', !isSidebarVisible ? 'shown' : 'hidden');
   };
 
-  // Don't render the editor until we've loaded from localStorage
-  if (!isLoaded) {
+  // Loading state
+  if (isLoading) {
     return (
-      <div className="app">
-        <header className="app-header">
-          <h1>BlockNote Sandbox</h1>
-          <p className="subtitle">Loading...</p>
-        </header>
+      <div className="app-loading">
+        <p>Loading comments system...</p>
       </div>
     );
   }
@@ -96,31 +72,49 @@ function App() {
     <div className="app">
       <header className="app-header">
         <div className="header-content">
-          <div className="header-text">
-            <h1>BlockNote Sandbox</h1>
-            <p className="subtitle">
-              A minimal, stable environment for experimenting with BlockNote
-            </p>
+          <h1>BlockNote Sandbox - Comments</h1>
+
+          <div className="header-controls">
+            <UserSelector
+              currentUser={currentUser}
+              onUserChange={setCurrentUser}
+            />
+
+            <button
+              onClick={toggleSidebar}
+              className="toggle-button"
+              title={isSidebarVisible ? 'Hide comments' : 'Show comments'}
+            >
+              {isSidebarVisible ? '➡️ Hide Comments' : '⬅️ Show Comments'}
+            </button>
+
+            <button
+              onClick={handleClearData}
+              className="clear-button"
+            >
+              Clear All Data
+            </button>
           </div>
-          <button onClick={handleClearContent} className="clear-button">
-            Clear All Content
-          </button>
         </div>
-        {lastSaved && (
-          <span className="status-indicator">
-            ● Auto-saved at {lastSaved.toLocaleTimeString()}
-          </span>
-        )}
       </header>
 
-      <main className="editor-container">
-        <Editor
-          onChange={handleEditorChange}
-          initialContent={initialContent}
-        />
+      <main className="app-main">
+        <div className="editor-container">
+          <Editor
+            yjsDoc={yjsDoc}
+            threadStore={threadStore}
+            resolveUsers={resolveUsers}
+            currentUser={currentUser}
+            onEditorReady={setEditor}
+          />
+        </div>
+
+        {isSidebarVisible && (
+          <CommentsSidebar editor={editor} />
+        )}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

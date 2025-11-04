@@ -47,6 +47,11 @@ export function useAIGeneration(editor: BlockNoteEditor | null): UseAIGeneration
     try {
       console.log('🤖 Generating content for:', userInput);
 
+      // Check if OpenAI is available
+      if (!openai) {
+        throw new Error('OpenAI not configured. Please add VITE_OPENAI_API_KEY to your environment variables.');
+      }
+
       // Get editor context for smart prompting
       const editorState = getEditorState(editor);
 

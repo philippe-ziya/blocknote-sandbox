@@ -17,16 +17,29 @@
 
 import OpenAI from 'openai';
 
-// Initialize OpenAI client with API key from environment
-const openai = new OpenAI({
-  apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-  dangerouslyAllowBrowser: true // Required for client-side usage
-});
-
 // Check if API key is configured
 export const isOpenAIConfigured = (): boolean => {
   const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
-  return !!apiKey && apiKey !== 'your-api-key-goes-here';
+  return !!apiKey && apiKey !== 'your-api-key-goes-here' && apiKey.startsWith('sk-');
 };
 
-export { openai };
+// Get OpenAI client instance (returns null if not configured)
+export const getOpenAIClient = (): OpenAI | null => {
+  if (!isOpenAIConfigured()) {
+    console.warn('⚠️ OpenAI not configured. AI features will be disabled.');
+    return null;
+  }
+
+  try {
+    return new OpenAI({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true // Required for client-side usage
+    });
+  } catch (error) {
+    console.error('❌ Failed to initialize OpenAI client:', error);
+    return null;
+  }
+};
+
+// Export client instance (may be null if not configured)
+export const openai = getOpenAIClient();

@@ -11,7 +11,6 @@
 
 import { useState } from 'react';
 import { Editor } from './components/Editor';
-import { CommentsSidebar } from './components/CommentsSidebar';
 import { UserSelector } from './components/UserSelector';
 import { useComments } from './hooks/useComments';
 import { clearStoredData } from './lib/yjs-setup';
@@ -106,12 +105,9 @@ function App() {
             resolveUsers={resolveUsers}
             currentUser={currentUser}
             onEditorReady={setEditor}
+            showSidebar={isSidebarVisible}
           />
         </div>
-
-        {isSidebarVisible && (
-          <CommentsSidebar editor={editor} />
-        )}
       </main>
     </div>
   );

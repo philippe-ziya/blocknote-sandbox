@@ -8,26 +8,29 @@
  * - Persistence through the Yjs document
  */
 
-import { YjsThreadStore, DefaultThreadStoreAuth } from '@blocknote/core';
+import { YjsThreadStore, DefaultThreadStoreAuth } from '@blocknote/core/comments';
 
 /**
- * Create thread store with authorization
+ * Create thread store
  *
  * @param {Y.Doc} doc - The Yjs document for persistence
  * @param {Object} currentUser - The current user object
  * @returns {YjsThreadStore} Configured thread store
  */
 export function createThreadStore(doc, currentUser) {
-  // Set up authorization rules
-  // This controls what the current user can do with comments
+  // Create authorization
   const auth = new DefaultThreadStoreAuth(
     currentUser.id,
-    currentUser.role // 'editor' or 'comment'
+    currentUser.role
   );
 
   // Create the thread store
-  // This connects the Yjs document with BlockNote's commenting system
-  const threadStore = new YjsThreadStore(doc, auth);
+  // First parameter: userId, Second: Yjs Map, Third: auth
+  const threadStore = new YjsThreadStore(
+    currentUser.id,
+    doc.getMap('threads'),
+    auth
+  );
 
   return threadStore;
 }

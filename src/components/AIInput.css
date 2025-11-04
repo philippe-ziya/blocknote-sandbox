@@ -1,12 +1,11 @@
 /**
- * AI Input Overlay Styles
+ * AI Input Overlay Styles - Figma Design Match
  *
  * IMPORTANT: These styles are completely isolated from BlockNote
  * - All classes prefixed with 'ai-input-' to avoid conflicts
  * - Uses position: fixed to float above BlockNote
  * - High z-index (9999) to ensure visibility
- * - Explicit font declarations to prevent inheritance
- * - No global styles - everything scoped to .ai-input-container
+ * - Matches Figma design exactly with multi-layer box shadow
  */
 
 /* Container - Floats above everything */
@@ -23,13 +22,15 @@
 
   /* Sizing */
   width: 90%;
-  max-width: 700px;
+  max-width: 640px;
 
   /* Transitions */
   transition: all 0.2s ease;
 
   /* Display */
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 /* Ensure children use border-box */
@@ -39,53 +40,102 @@
   box-sizing: border-box;
 }
 
-/* Focused state - lift up slightly */
+/* Focused state - expand slightly */
 .ai-input-container.ai-input-focused {
-  bottom: 32px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  bottom: 24px;
 }
 
-/* Main input wrapper */
+/* Header - only visible when focused */
+.ai-input-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ai-input-header-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #eff6ff;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.ai-input-header-badge:hover {
+  background: #dbeafe;
+}
+
+.ai-input-header-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.ai-input-header-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3b82f6;
+  line-height: 1.5;
+}
+
+/* Main input wrapper - Figma exact styling */
 .ai-input-wrapper {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 16px;
+  padding: 16px;
   background: white;
-  border: 2px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  /* Exact Figma box shadow */
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05),
+              0 1px 1px -0.5px rgba(0, 0, 0, 0.02),
+              0 3px 3px -1.5px rgba(0, 0, 0, 0.02),
+              0 6px 6px -3px rgba(0, 0, 0, 0.02),
+              0 12px 12px -6px rgba(0, 0, 0, 0.02),
+              0 24px 24px -12px rgba(0, 0, 0, 0.02);
+
   transition: all 0.2s ease;
 }
 
-/* Focused wrapper styling */
+/* Focused wrapper styling - no top border, connects to header and controls */
 .ai-input-container.ai-input-focused .ai-input-wrapper {
-  border-color: #6366f1;
-  background: #fefefe;
+  border-color: #e5e7eb;
+  border-top: none;
+  border-bottom: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* Icon/emoji display */
+/* Icon/emoji display - hidden for cleaner Figma match */
 .ai-input-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-  line-height: 1;
+  display: none;
 }
 
-/* Text input field */
+/* Text input field - Figma styling */
 .ai-input-field {
   flex: 1;
   border: none;
   outline: none;
-  font-size: 15px;
+  font-size: 14px;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: transparent;
-  color: #333;
-  line-height: 1.4;
-  padding: 4px 0;
+  color: #1f2937;
+  line-height: 1.5;
+  padding: 2px 0;
+  font-weight: 400;
 }
 
 .ai-input-field::placeholder {
-  color: #999;
+  color: #9ca3af;
 }
 
 .ai-input-field:disabled {
@@ -93,51 +143,122 @@
   cursor: not-allowed;
 }
 
-/* Generate button */
+/* Generate button - Blue send button like Figma */
 .ai-generate-button {
-  padding: 8px 16px;
-  background: #6366f1;
+  padding: 8px 12px;
+  background: #3b82f6;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   font-weight: 500;
   flex-shrink: 0;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
 }
 
 .ai-generate-button:hover:not(:disabled) {
-  background: #4f46e5;
-  transform: translateY(-1px);
+  background: #2563eb;
+}
+
+.ai-generate-button:active:not(:disabled) {
+  background: #1d4ed8;
 }
 
 .ai-generate-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
+}
+
+/* Generate button when in focused/controls state */
+.ai-generate-button-focused {
+  margin-left: auto;
 }
 
 /* Error message */
 .ai-input-error {
   margin-top: 8px;
   padding: 8px 12px;
-  background: #fee;
-  border: 1px solid #fcc;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
   border-radius: 6px;
-  color: #c33;
+  color: #dc2626;
   font-size: 13px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+/* Hint text - hidden for cleaner design */
+.ai-input-hint {
+  display: none;
+}
+
+/* Control buttons container */
+.ai-input-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px 12px 16px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Hint text */
-.ai-input-hint {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 12px;
-  color: #999;
+/* Group for left-aligned control buttons */
+.ai-control-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Individual control button */
+.ai-control-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+  height: 36px;
+}
+
+.ai-control-button:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.ai-control-button:active {
+  background: #f3f4f6;
+}
+
+.ai-control-icon {
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-control-text {
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 /* Pulse animation while generating */

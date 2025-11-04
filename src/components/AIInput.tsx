@@ -66,43 +66,77 @@ export function AIInput({ onGenerate, isGenerating, error }: AIInputProps) {
 
   return (
     <div className={`ai-input-container ${isFocused ? 'ai-input-focused' : ''}`}>
-      <div className="ai-input-wrapper">
-        <div className="ai-input-icon">
-          {isGenerating ? '⏳' : '✨'}
+      {/* Header - only shown when focused */}
+      {isFocused && (
+        <div className="ai-input-header">
+          <div className="ai-input-header-badge">
+            <span className="ai-input-header-icon">✏️</span>
+            <span className="ai-input-header-text">Review my response</span>
+          </div>
         </div>
+      )}
 
+      <div className="ai-input-wrapper">
         <input
           ref={inputRef}
           type="text"
           className="ai-input-field"
-          placeholder="What do you want to write? (⌘K)"
+          placeholder="Ask anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={(e) => {
+            // Delay blur to allow button clicks
+            setTimeout(() => setIsFocused(false), 150);
+          }}
           disabled={isGenerating}
         />
 
-        <button
-          className="ai-generate-button"
-          onClick={handleSubmit}
-          disabled={!input.trim() || isGenerating}
-          title="Generate (Enter)"
-        >
-          {isGenerating ? 'Generating...' : '⚡'}
-        </button>
+        {/* Send button - only shown when NOT focused */}
+        {!isFocused && (
+          <button
+            className="ai-generate-button"
+            onClick={handleSubmit}
+            disabled={!input.trim() || isGenerating}
+            title="Generate (Enter)"
+          >
+            {isGenerating ? '⏳' : '▶'}
+          </button>
+        )}
       </div>
+
+      {/* Controls - only shown when focused */}
+      {isFocused && (
+        <div className="ai-input-controls">
+          <div className="ai-control-buttons-group">
+            <button className="ai-control-button">
+              <span className="ai-control-icon">+</span>
+              <span className="ai-control-text">Context</span>
+            </button>
+            <button className="ai-control-button">
+              <span className="ai-control-icon">⚙️</span>
+              <span className="ai-control-text">Settings</span>
+            </button>
+          </div>
+
+          {/* Send button - moved here when focused */}
+          <button
+            className="ai-generate-button ai-generate-button-focused"
+            onClick={handleSubmit}
+            disabled={!input.trim() || isGenerating}
+            title="Generate (Enter)"
+          >
+            {isGenerating ? '⏳' : '▶'}
+          </button>
+        </div>
+      )}
 
       {error && (
         <div className="ai-input-error">
           ⚠️ {error}
         </div>
       )}
-
-      <div className="ai-input-hint">
-        Press Enter to generate • Escape to dismiss • ⌘K to focus
-      </div>
     </div>
   );
 }

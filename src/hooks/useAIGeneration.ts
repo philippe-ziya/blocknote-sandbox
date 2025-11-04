@@ -150,16 +150,30 @@ export function useAIGeneration(editor: BlockNoteEditor | null): UseAIGeneration
    */
   const insertBlocksAtCursor = (editor: BlockNoteEditor, blocks: BlockNoteBlock[]) => {
     try {
-      const selection = editor.getSelection();
+      // Get current text cursor position
+      const textCursorPosition = editor.getTextCursorPosition();
 
-      if (selection) {
-        // Insert at cursor position
-        editor.insertBlocks(blocks as any, selection.to.block);
-        console.log('📍 Inserted at cursor position');
+      if (textCursorPosition && textCursorPosition.block) {
+        // Insert after the block where cursor is
+        editor.insertBlocks(blocks as any, textCursorPosition.block.id, 'after');
+        console.log('📍 Inserted after cursor block:', textCursorPosition.block.id);
       } else {
-        // Append to end if no selection
-        editor.insertBlocks(blocks as any);
-        console.log('📍 Appended to end');
+        // Fallback: append to end of document
+        const allBlocks = editor.document;
+        if (allBlocks.length > 0) {
+          const lastBlock = allBlocks[allBlocks.length - 1];
+          if (lastBlock && lastBlock.id) {
+            editor.insertBlocks(blocks as any, lastBlock.id, 'after');
+            console.log('📍 Inserted after last block');
+          } else {
+            editor.insertBlocks(blocks as any);
+            console.log('📍 Appended to end (fallback)');
+          }
+        } else {
+          // Empty editor - just insert
+          editor.insertBlocks(blocks as any);
+          console.log('📍 Inserted into empty editor');
+        }
       }
     } catch (err) {
       console.error('Failed to insert blocks:', err);

@@ -18,7 +18,10 @@ function App() {
   const [lastSaved, setLastSaved] = useState(null);
 
   // Store initial content loaded from localStorage
-  const [initialContent, setInitialContent] = useState(null);
+  const [initialContent, setInitialContent] = useState(undefined);
+
+  // Track whether we've finished loading from localStorage
+  const [isLoaded, setIsLoaded] = useState(false);
 
   /**
    * Load saved content from localStorage on component mount
@@ -29,11 +32,17 @@ function App() {
       if (savedContent) {
         const parsed = JSON.parse(savedContent);
         setInitialContent(parsed);
-        console.log('Loaded saved content from localStorage');
+        console.log('Loaded saved content from localStorage:', parsed);
+      } else {
+        setInitialContent(undefined);
+        console.log('No saved content found, starting fresh');
       }
     } catch (error) {
       console.error('Error loading saved content:', error);
       // If there's an error, we'll just start with empty content
+      setInitialContent(undefined);
+    } finally {
+      setIsLoaded(true);
     }
   }, []);
 
@@ -59,13 +68,44 @@ function App() {
     }
   };
 
+  /**
+   * Clear all saved content and refresh the page
+   */
+  const handleClearContent = () => {
+    if (confirm('Are you sure you want to clear all content? This cannot be undone.')) {
+      localStorage.removeItem(STORAGE_KEY);
+      console.log('Content cleared from localStorage');
+      // Reload the page to start fresh
+      window.location.reload();
+    }
+  };
+
+  // Don't render the editor until we've loaded from localStorage
+  if (!isLoaded) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <h1>BlockNote Sandbox</h1>
+          <p className="subtitle">Loading...</p>
+        </header>
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       <header className="app-header">
-        <h1>BlockNote Sandbox</h1>
-        <p className="subtitle">
-          A minimal, stable environment for experimenting with BlockNote
-        </p>
+        <div className="header-content">
+          <div className="header-text">
+            <h1>BlockNote Sandbox</h1>
+            <p className="subtitle">
+              A minimal, stable environment for experimenting with BlockNote
+            </p>
+          </div>
+          <button onClick={handleClearContent} className="clear-button">
+            Clear All Content
+          </button>
+        </div>
         {lastSaved && (
           <span className="status-indicator">
             ● Auto-saved at {lastSaved.toLocaleTimeString()}
